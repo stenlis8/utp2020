@@ -1,0 +1,32 @@
+---
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+
+- name: Install Apache web server
+  yum:
+    name: "{{ package }}"
+    state: latest
+
+- firewalld:
+    zone: dmz
+    service: "{{ services }}"
+    permanent: yes
+    state: enabled
+
+- name: Start service httpd, if not started
+  service:
+    name: httpd
+    state: started
+  tag: "start"
+
+- name: Stop service httpd
+  service:
+    name: httpd
+    state: stopped
+  tag: "stop"
+  
+- name: Enable service httpd, and not touch the state
+  service:
+    name: httpd
+    enabled: yes

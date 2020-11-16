@@ -1,0 +1,43 @@
+---
+## tasks file for httpd
+- name: Install Apache web server
+  yum:
+    name: "{{ package }}"
+    state: latest
+
+- name: Replace config file
+  template:
+    src: /etc/ansible/roles/httpd/templates/httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    owner: root
+    mode: 0644 
+
+- firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items: "{{services}}"
+
+- name: Reload firewalld httpd
+  service:
+    name: firewalld
+    state: reloaded
+
+- name: Start service httpd, if not started
+  service:
+    name: httpd
+    state: started
+  tags: 
+    - start
+
+- name: Stop service httpd
+  service:
+    name: httpd
+    state: stopped
+  tags: 
+    - stop
+
+- name: Enable service httpd, and not touch the state
+  service:
+    name: httpd
+    enabled: yes

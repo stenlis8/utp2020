@@ -1,0 +1,13 @@
+---
+# defaults file for httpd
+listen_port: 8081
+services:
+  - "80/tcp"
+  - "443/tcp"
+  - "{{ listen_port }}/tcp"
+
+package:
+  - epel-release
+  - httpd
+  - httpd-tools
+
